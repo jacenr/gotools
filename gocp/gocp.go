@@ -7,5 +7,7 @@ import (
 )
 
 func main() {
-	fmt.Println(filepath.IsAbs("/mygo/src"))
+	fmt.Println(filepath.IsAbs("/test/mygo/src"))
+	absPath, _ := filepath.Abs("/mygo/src")
+	fmt.Println(absPath)
 }
