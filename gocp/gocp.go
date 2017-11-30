@@ -12,9 +12,10 @@ import (
 var dst string
 var src string
 var cpWg sync.WaitGroup
+var l *log.Logger
 
 func init() {
-	l := log.New(os.Stdout, "copy log", Lshortfile)
+	l = log.New(os.Stdout, "copy log", log.Lshortfile)
 	src = os.Args[1]
 	dst = os.Args[2]
 
