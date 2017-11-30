@@ -23,17 +23,17 @@ func init() {
 	}
 
 	if !filepath.IsAbs(src) {
-		src = cwd + src
+		src = filepath.Join(cwd, src)
 	}
 	if !filepath.IsAbs(dst) {
-		dst = cwd + dst
+		dst = filepath.Join(cwd, src)
 	}
-	if os.IsNotExist(src) {
-		log.Fatalln("The source file or dir is not exist.")
-	}
-	if os.IsNotExist(dst) {
-		log.Fatalln("The dst file or dir is not exist.")
-	}
+	// if os.IsNotExist(src) {
+	// 	log.Fatalln("The source file or dir is not exist.")
+	// }
+	// if os.IsNotExist(dst) {
+	// 	log.Fatalln("The dst file or dir is not exist.")
+	// }
 	dstFI, dstfiErr := os.Stat(dst)
 	if dstfiErr != nil {
 		log.Fatalln(dstfiErr)
@@ -73,6 +73,7 @@ func wkFn(path string, info os.FileInfo, err error) error {
 	dstName := filepath.Join(baseName, dirName)
 	cpWg.Add(1)
 	go copyFile(dstName, srcName)
+	return nil
 }
 
 func copyFile(dstName string, srcName string) {
