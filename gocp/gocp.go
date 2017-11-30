@@ -14,12 +14,13 @@ var src string
 var cpWg sync.WaitGroup
 
 func init() {
+	l := log.New(os.Stdout, "copy log", Lshortfile)
 	src = os.Args[1]
 	dst = os.Args[2]
 
 	cwd, gtWdErr := os.Getwd()
 	if gtWdErr != nil {
-		log.Fatalln(gtWdErr)
+		l.Fatalln(gtWdErr)
 	}
 
 	if !filepath.IsAbs(src) {
@@ -29,17 +30,17 @@ func init() {
 		dst = filepath.Join(cwd, src)
 	}
 	// if os.IsNotExist(src) {
-	// 	log.Fatalln("The source file or dir is not exist.")
+	// 	l.Fatalln("The source file or dir is not exist.")
 	// }
 	// if os.IsNotExist(dst) {
-	// 	log.Fatalln("The dst file or dir is not exist.")
+	// 	l.Fatalln("The dst file or dir is not exist.")
 	// }
 	dstFI, dstfiErr := os.Stat(dst)
 	if dstfiErr != nil {
-		log.Fatalln(dstfiErr)
+		l.Fatalln(dstfiErr)
 	}
 	if !dstFI.Mode().IsDir() {
-		log.Fatalln("The dst must be a dir.")
+		l.Fatalln("The dst must be a dir.")
 	}
 }
 
@@ -47,7 +48,7 @@ func main() {
 	var WkWg sync.WaitGroup
 	srcList, _ := filepath.Glob(src)
 	if srcList == nil {
-		log.Fatalln("The source file or dir is not exist.")
+		l.Fatalln("The source file or dir is not exist.")
 	}
 
 	for _, i := range srcList {
@@ -81,15 +82,15 @@ func copyFile(dstName string, srcName string) {
 	dstFile, cErr := os.Create(dstName)
 	defer dstFile.Close()
 	if cErr != nil {
-		log.Fatalln(cErr)
+		l.Fatalln(cErr)
 	}
 	srcFile, oErr := os.Open(srcName)
 	defer srcFile.Close()
 	if oErr != nil {
-		log.Fatalln(oErr)
+		l.Fatalln(oErr)
 	}
 	_, cpErr := io.Copy(dstFile, srcFile)
 	if cpErr != nil {
-		log.Fatalln(cpErr)
+		l.Fatalln(cpErr)
 	}
 }
