@@ -79,7 +79,6 @@ func wkFn(path string, info os.FileInfo, err error) error {
 }
 
 func copyFile(dstName string, srcName string) {
-	fmt.Println("ok")
 	l.Println(dstName)
 	l.Println(srcName)
 	defer cpWg.Done()
