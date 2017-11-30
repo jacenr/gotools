@@ -36,6 +36,7 @@ func init() {
 	// if os.IsNotExist(dst) {
 	// 	l.Fatalln("The dst file or dir is not exist.")
 	// }
+	l.Println(dst)
 	dstFI, dstfiErr := os.Stat(dst)
 	if dstfiErr != nil {
 		l.Fatalln(dstfiErr)
