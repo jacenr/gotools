@@ -28,7 +28,7 @@ func init() {
 		src = filepath.Join(cwd, src)
 	}
 	if !filepath.IsAbs(dst) {
-		dst = filepath.Join(cwd, src)
+		dst = filepath.Join(cwd, dst)
 	}
 	// if os.IsNotExist(src) {
 	// 	l.Fatalln("The source file or dir is not exist.")
@@ -36,7 +36,6 @@ func init() {
 	// if os.IsNotExist(dst) {
 	// 	l.Fatalln("The dst file or dir is not exist.")
 	// }
-	l.Println(dst)
 	dstFI, dstfiErr := os.Stat(dst)
 	if dstfiErr != nil {
 		l.Fatalln(dstfiErr)
