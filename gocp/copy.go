@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -100,15 +101,15 @@ func copyFile(dstName string, srcName string) {
 	dstFile, cErr := os.Create(dstName)
 	defer dstFile.Close()
 	if cErr != nil {
-		l.Fatalln(cErr)
+		lg.Fatalln(cErr)
 	}
 	srcFile, oErr := os.Open(srcName)
 	defer srcFile.Close()
 	if oErr != nil {
-		l.Fatalln(oErr)
+		lg.Fatalln(oErr)
 	}
 	_, cpErr := io.Copy(dstFile, srcFile)
 	if cpErr != nil {
-		l.Fatalln(cpErr)
+		lg.Fatalln(cpErr)
 	}
 }
