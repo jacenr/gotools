@@ -19,8 +19,8 @@ func init() {
 }
 
 func main() {
-	src := os.Args[1]
-	dst := os.Args[2]
+	src = os.Args[1]
+	dst = os.Args[2]
 
 	//......
 	srcList, gbErr := filepath.Glob(src)
@@ -84,8 +84,18 @@ func main() {
 }
 
 func wkFn(path string, info os.FileInfo, err error) error {
-	fileName := strings.TrimPrefix(path, src)
+	var fileName string
+	if path == src {
+		fileName = filepath.Base(path)
+	} else {
+		fileName = strings.TrimPrefix(path, src)
+	}
 	dstFileName := filepath.Join(dst, fileName)
+	lg.Println(src)
+	lg.Println(path)
+	lg.Println(dst)
+	lg.Println(fileName)
+	lg.Println(dstFileName)
 	pathInfo, pathErr := os.Lstat(path)
 	if pathErr != nil {
 		lg.Fatalln(pathErr)
@@ -100,6 +110,9 @@ func wkFn(path string, info os.FileInfo, err error) error {
 }
 
 func copyFile(dstName string, srcName string) {
+	lg.Println("in copyfile func")
+	lg.Println(dstName)
+	lg.Println(srcName)
 	defer WkWg.Done()
 	dstFile, cErr := os.Create(dstName)
 	defer dstFile.Close()
@@ -115,4 +128,5 @@ func copyFile(dstName string, srcName string) {
 	if cpErr != nil {
 		lg.Fatalln(cpErr)
 	}
+	lg.Println("copyfile end.")
 }
