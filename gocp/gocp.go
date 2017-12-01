@@ -6,82 +6,118 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 )
 
-var dst string
-var src string
-var cpWg sync.WaitGroup
+// var dst string
+// var src string
 var l *log.Logger
+var WkWg sync.WaitGroup
 
-func init() {
-	l = log.New(os.Stdout, "copy log", log.Lshortfile)
-	src = os.Args[1]
-	dst = os.Args[2]
+type paths struct {
+	name    string
+	dirPath bool
+	exist   bool
+}
 
+// var src paths
+var dst paths
+
+func (p *paths) initPath(s string) error {
+	p.name = s
+	fi, fiErr := os.Lstat(s)
+	if fiErr != nil {
+		p.exist = false
+		if strings.HasSuffix(s, "/") {
+			p.dirPath = true
+			return nil
+		}
+		p.dirPath = false
+		return nil
+	}
+	p.exist = true
+	if fi.IsDir() {
+		p.dirPath = true
+		return nil
+	}
+	p.dirPath = false
+	return nil
+}
+
+func getAbsPath(s string) string {
 	cwd, gtWdErr := os.Getwd()
 	if gtWdErr != nil {
 		l.Fatalln(gtWdErr)
 	}
+	if !filepath.IsAbs(s) {
+		s = filepath.Join(cwd, s)
+	}
+	return s
+}
 
-	if !filepath.IsAbs(src) {
-		src = filepath.Join(cwd, src)
-	}
-	if !filepath.IsAbs(dst) {
-		dst = filepath.Join(cwd, dst)
-	}
-	// if os.IsNotExist(src) {
-	// 	l.Fatalln("The source file or dir is not exist.")
+func init() {
+	l = log.New(os.Stdout, "log", log.Lshortfile)
+	dstpath := getAbsPath(os.Args[2])
+	dst.initPath(dstpath)
+}
+
+func check(srcP *paths, dstP *paths) {
+	// if !srcP.exist {
+	// 	l.Fatalln("The src is not exist.")
 	// }
-	// if os.IsNotExist(dst) {
-	// 	l.Fatalln("The dst file or dir is not exist.")
-	// }
-	dstFI, dstfiErr := os.Stat(dst)
-	if dstfiErr != nil {
-		l.Fatalln(dstfiErr)
+	if srcP.dirPath {
+		if !dstP.exist {
+			l.Fatalln("The dst is not exist.")
+		}
+		if !dstP.dirPath {
+			l.Fatalln("The dst must be a dir.")
+		}
 	}
-	if !dstFI.Mode().IsDir() {
-		l.Fatalln("The dst must be a dir.")
+	if dstP.dirPath {
+		if !dstP.exist {
+			l.Fatalln("The dst is not exist.")
+		}
 	}
+
 }
 
 func main() {
-	var WkWg sync.WaitGroup
-	srcList, _ := filepath.Glob(src)
+	srcpath := getAbsPath(os.Args[1])
+	srcpath = strings.TrimSuffix(srcpath, "/")
+	srcList, _ := filepath.Glob(srcpath)
 	if srcList == nil {
 		l.Fatalln("The source file or dir is not exist.")
 	}
-
 	for _, i := range srcList {
+		srcI := new(paths)
+		srcI.initPath(i)
+		check(srcI, dst)
 		WkWg.Add(1)
 		go func(s string) {
-			filepath.Walk(s, wkFn)
+			wkerr := filepath.Walk(s, wkFn)
+			if wkerr != nil {
+				l.Fatalln(wkerr)
+			}
 			WkWg.Done()
 		}(i)
 	}
-	WkWg.Add(1)
-	go func() {
-		cpWg.Wait()
-		fmt.Println("Done.")
-		WkWg.Done()
-	}()
 	WkWg.Wait()
+	fmt.Println("Done.")
 }
 
 func wkFn(path string, info os.FileInfo, err error) error {
 	baseName := filepath.Base(path)
-	dirName := filepath.Dir(path)
-	srcName := filepath.Join(path, info.Name())
-	dstName := filepath.Join(baseName, dirName)
-	cpWg.Add(1)
+	//srcName := filepath.Join(path, info.Name())
+	srcName := path
+	dstName := filepath.Join(dst, baseName)
+	WkWg.Add(1)
 	go copyFile(dstName, srcName)
 	return nil
 }
 
 func copyFile(dstName string, srcName string) {
-	l.Println(dstName)
-	l.Println(srcName)
-	defer cpWg.Done()
+	defer WkWg.Done()
 	dstFile, cErr := os.Create(dstName)
 	defer dstFile.Close()
 	if cErr != nil {
