@@ -15,7 +15,7 @@ var WkWg sync.WaitGroup
 var lg *log.Logger
 
 func init() {
-	lg := log.New(os.Stdout, "log", log.Lshortfile)
+	lg = log.New(os.Stdout, "log", log.Lshortfile)
 }
 
 func main() {
@@ -36,6 +36,9 @@ func main() {
 		exist bool
 	}{name: dst}
 	dstFi, dstFiErr := os.Lstat(dst)
+	if dstFiErr != nil {
+		lg.Fatalln(dstFiErr)
+	}
 	if dstFi == nil {
 		dstStatus.exist = false
 	} else {
