@@ -11,6 +11,7 @@ import (
 var src string
 var dst string
 var WkWg sync.WaitGroup
+var lg *log.Logger
 
 func init() {
 	lg := log.New(os.Stdout, "log", log.Lshortfile)
@@ -70,7 +71,7 @@ func main() {
 
 	for _, srcName := range srcList {
 		WkWg.Add(1)
-		go func(s) {
+		go func(s string) {
 			filepath.Walk(s, wkFn)
 			WkWg.Done()
 		}(srcName)
@@ -91,6 +92,7 @@ func wkFn(path string, info os.FileInfo, err error) error {
 		WkWg.Add(1)
 		go copyFile(dstFileName, path)
 	}
+	return nil
 }
 
 func copyFile(dstName string, srcName string) {
