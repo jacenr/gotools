@@ -59,14 +59,6 @@ func main() {
 		lg.Fatalln("Can't copy multi-file src to a dst file.")
 	}
 
-	for _, i := range srcList {
-		wg.Add(1)
-		go func(src string) {
-			filepath.Walk(src, wkFn)
-			wg.Done()
-		}(i)
-	}
-
 	wkFn := func(path string, info os.FileInfo, err error) error {
 		dirName := filepath.Dir(src)
 		fileName := strings.TrimPrefix(path, dirName)
@@ -82,6 +74,14 @@ func main() {
 			go copyFile(dstFileName, path)
 		}
 		return nil
+	}
+
+	for _, i := range srcList {
+		wg.Add(1)
+		go func(src string) {
+			filepath.Walk(src, wkFn)
+			wg.Done()
+		}(i)
 	}
 
 }
