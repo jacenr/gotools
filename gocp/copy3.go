@@ -83,7 +83,8 @@ func main() {
 			wg.Done()
 		}(i)
 	}
-
+	wg.Wait()
+	lg.Println("Done.")
 }
 
 // func wkFn(path string, info os.FileInfo, err error) error {
