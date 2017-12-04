@@ -8,4 +8,4 @@ gocp.go
 		3. FILE to EXIST_FILE (overwrite);
 		4. [DIRs, FILEs, ...] to EXIST_DIR;
 
-	NOTE: When use with glob pattern, you shoud surround it in double quote;
+	NOTE: When use with glob pattern, you shoud surround it with double quote;
