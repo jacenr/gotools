@@ -17,9 +17,9 @@ func init() {
 }
 
 func main() {
-	src := strings.TrimSuffix(os.Args[0], "/")
+	src := strings.TrimSuffix(os.Args[1], "/")
 	lg.Println(src)
-	dst := strings.TrimSuffix(os.Args[1], "/")
+	dst := strings.TrimSuffix(os.Args[2], "/")
 	lg.Println(dst)
 
 	dstFi, dstFiErr := os.Lstat(dst)
