@@ -18,7 +18,9 @@ func init() {
 
 func main() {
 	src := strings.TrimSuffix(os.Args[0], "/")
+	lg.Println(src)
 	dst := strings.TrimSuffix(os.Args[1], "/")
+	lg.Println(dst)
 
 	dstFi, dstFiErr := os.Lstat(dst)
 	if dstFiErr != nil {
@@ -71,7 +73,10 @@ func main() {
 			os.MkdirAll(dstFileName, pathInfo.Mode().Perm())
 		} else {
 			wg.Add(1)
-			go copyFile(dstFileName, path)
+			go func() {
+				copyFile(dstFileName, path)
+				wg.Done()
+			}()
 		}
 		return nil
 	}
@@ -117,7 +122,6 @@ func main() {
 // }
 
 func copyFile(dstName string, srcName string) {
-	defer wg.Done()
 	dstFile, cErr := os.Create(dstName)
 	defer dstFile.Close()
 	if cErr != nil {
