@@ -25,7 +25,7 @@ func main() {
 		lg.Println("Warning: the dst may is not exist.")
 	}
 
-	srcList := filepath.Glob(src)
+	srcList, _ := filepath.Glob(src)
 	srcListLen := len(srcList)
 	if srcListLen == 0 {
 		lg.Fatalln("You must give a valid src.")
@@ -67,36 +67,53 @@ func main() {
 		}(i)
 	}
 
+	wkFn := func(path string, info os.FileInfo, err error) error {
+		dirName := filepath.Dir(src)
+		fileName := strings.TrimPrefix(path, dirName)
+		dstFileName := filepath.Join(dst, fileName)
+		pathInfo, pathErr := os.Lstat(path)
+		if pathErr != nil {
+			lg.Fatalln(pathErr)
+		}
+		if pathInfo.IsDir() {
+			os.MkdirAll(dstFileName, pathInfo.Mode().Perm())
+		} else {
+			wg.Add(1)
+			go copyFile(dstFileName, path)
+		}
+		return nil
+	}
+
 }
 
-func wkFn(path string, info os.FileInfo, err error) error {
-	// var fileName string
-	// if path == src {
-	// fileName := filepath.Base(path)
-	// } else {
-	// fileName = strings.TrimPrefix(path, src)
-	// }
-	// dstFileName := filepath.Join(dst, fileName)
-	// lg.Println(src)
-	// lg.Println(path)
-	// lg.Println(dst)
-	// lg.Println(fileName)
-	// lg.Println(dstFileName)
-	dirName := filepath.Dir(src)
-	fileName := strings.TrimPrefix(path, dirName)
-	dstFileName := filepath.Join(dst, fileName)
-	pathInfo, pathErr := os.Lstat(path)
-	if pathErr != nil {
-		lg.Fatalln(pathErr)
-	}
-	if pathInfo.IsDir() {
-		os.MkdirAll(dstFileName, pathInfo.Mode().Perm())
-	} else {
-		wg.Add(1)
-		go copyFile(dstFileName, path)
-	}
-	return nil
-}
+// func wkFn(path string, info os.FileInfo, err error) error {
+// 	// var fileName string
+// 	// if path == src {
+// 	// fileName := filepath.Base(path)
+// 	// } else {
+// 	// fileName = strings.TrimPrefix(path, src)
+// 	// }
+// 	// dstFileName := filepath.Join(dst, fileName)
+// 	// lg.Println(src)
+// 	// lg.Println(path)
+// 	// lg.Println(dst)
+// 	// lg.Println(fileName)
+// 	// lg.Println(dstFileName)
+// 	dirName := filepath.Dir(src)
+// 	fileName := strings.TrimPrefix(path, dirName)
+// 	dstFileName := filepath.Join(dst, fileName)
+// 	pathInfo, pathErr := os.Lstat(path)
+// 	if pathErr != nil {
+// 		lg.Fatalln(pathErr)
+// 	}
+// 	if pathInfo.IsDir() {
+// 		os.MkdirAll(dstFileName, pathInfo.Mode().Perm())
+// 	} else {
+// 		wg.Add(1)
+// 		go copyFile(dstFileName, path)
+// 	}
+// 	return nil
+// }
 
 func copyFile(dstName string, srcName string) {
 	defer wg.Done()
