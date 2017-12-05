@@ -9,3 +9,5 @@ gocp.go
 		4. [DIRs, FILEs, ...] to EXIST_DIR;
 
 	NOTE: When use with glob pattern, you shoud surround it with double quote;
+	      eg: gocp "test*" /tmp
+	          This will copy all files or DIRs which are matched "test*" to "/tmp".
