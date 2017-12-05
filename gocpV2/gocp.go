@@ -82,6 +82,7 @@ func main() {
 	//  **Following: [FILEs, DIRs, ...] to DIR.**
 
 	// Difine the walk function which is used to in filepath.Walk function.
+	var src string
 	wkFn := func(path string, info os.FileInfo, err error) error {
 		dirName := filepath.Dir(src)
 		fileName := strings.TrimPrefix(path, dirName)
