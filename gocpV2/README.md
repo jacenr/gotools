@@ -7,7 +7,7 @@ gocp.go V2
 	and we make the last argument of shell as the destination.
 	eg: gocp test* /tmp
 	    Every file or directory that matched by "test*" will be a source, and "/tmp" will be
-	    destination.
+	    the destination.
 
 	YOU CAN DO:
 		1. FILE to NEW_FILE;
