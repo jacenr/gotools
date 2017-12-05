@@ -46,6 +46,7 @@ func main() {
 			os.MkdirAll(dst, fi.Mode().Perm()) // If the src is a directory, make the dst directory. DIR to NEW_DIR.
 		} else {
 			copyFile(dst, srcList[0]) // If the src is a file, just copy it to the dst. FILE to NEW_FILE.
+			lg.Println("Done.")
 			os.Exit(0)
 		}
 	}
@@ -61,6 +62,7 @@ func main() {
 			} else {
 				lg.Println("Warning: The dst file will be overwriten.") // WARNING: FILE to EXIST_FILE.
 				copyFile(dst, srcList[0])
+				lg.Println("Done.")
 				os.Exit(0)
 			}
 		}
