@@ -1,8 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"flag"
-	"fmt"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -22,10 +23,10 @@ var dirs string
 var strCh chan string
 
 func init() {
-	lg := log.New(os.Stderr, "gofind ", log.Lshortfile)
+	lg = log.New(os.Stderr, "gofind ", log.Lshortfile)
 	flag.StringVar(&name, "n", "", "Optional. Search files by name with \"full\", \"sub\", \"reg\" sub-option.")
 	flag.StringVar(&size, "s", "", "Optional. Search files by size with \"=\", \"<\", \"<=\", \">\", \">=\" sub-option.")
-	flag.StringVar(&modifytime, "m", " ", "Optional. Search files by modify time with \"=\", \"<\", \"<=\", \">\", \">=\" sub-option.") // eg: >=,20171206114930
+	flag.StringVar(&modifytime, "m", "", "Optional. Search files by modify time with \"=\", \"<\", \"<=\", \">\", \">=\" sub-option.") // eg: >=,20171206114930
 	flag.StringVar(&dirs, "p", ".", "Optional. The search paths. Separated by comma.")
 }
 
@@ -47,8 +48,13 @@ func main() {
 		wg.Wait()
 		close(strCh)
 	}()
+	newlineBuff := bytes.NewBuffer([]byte("\n"))
 	for file := range strCh {
-		fmt.Println(file)
+		//		fmt.Println(file)
+		fileByte := []byte(file)
+		buf := bytes.NewBuffer(fileByte)
+		io.Copy(os.Stdout, buf)
+		io.Copy(os.Stdout, newlineBuff)
 	}
 }
 
