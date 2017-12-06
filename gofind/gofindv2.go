@@ -27,10 +27,21 @@ var funcList []func(info os.FileInfo) bool
 
 func init() {
 	lg = log.New(os.Stderr, "gofind ", log.Lshortfile)
+
+	// Search file by file name. For example: "full,testName" or "sub,test", or "reg,.*test.*".
+	// "full": full string matching, "sub": sub string matching, "reg": regular expression matching.
 	flag.StringVar(&name, "n", "", "Optional. Search files by name with \"full\", \"sub\", \"reg\" sub-option.")
+
+	// Search file by file size. Option example: ">=,1024", unit B.
 	flag.StringVar(&size, "s", "", "Optional. Search files by size with \"=\", \"<\", \"<=\", \">\", \">=\" sub-option.")
-	flag.StringVar(&modifytime, "m", "", "Optional. Search files by modify time with \"=\", \"<\", \"<=\", \">\", \">=\" sub-option.") // eg: >=,20171206114930
+
+	// Search file by modify time. Option format: ">=,20171206114930".
+	flag.StringVar(&modifytime, "m", "", "Optional. Search files by modify time with \"=\", \"<\", \"<=\", \">\", \">=\" sub-option.")
+
+	// Filter file or directory by type. "dir": "directory".
 	flag.StringVar(&dirFlag, "d", "b", "Optional. \"n,o,b\", n: no dir, o: only dir, b: both dir and file will be output.")
+
+	// Specify the search path, default current work directory.
 	flag.StringVar(&dirs, "p", ".", "Optional. The search paths. Separated by comma.")
 }
 
@@ -170,13 +181,13 @@ func byTime(info os.FileInfo) bool {
 	case "=":
 		return timeS.Equal(fileTime)
 	case ">":
-		return timeS.After(fileTime)
-	case ">=":
-		return timeS.After(fileTime) || timeS.Equal(fileTime)
-	case "<":
 		return timeS.Before(fileTime)
-	case "<=":
+	case ">=":
 		return timeS.Before(fileTime) || timeS.Equal(fileTime)
+	case "<":
+		return timeS.After(fileTime)
+	case "<=":
+		return timeS.After(fileTime) || timeS.Equal(fileTime)
 	}
 	return false
 }
