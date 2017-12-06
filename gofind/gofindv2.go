@@ -35,7 +35,7 @@ func init() {
 func main() {
 	flag.Parse()
 	strCh = make(chan string)
-	funcList = make([]string, 0, 3)
+	funcList = make([]func(info os.FileInfo) bool, 0, 3)
 	if name != "" {
 		funcList := append(funcList, byName)
 	}
@@ -77,8 +77,8 @@ func walkFn(path string, info os.FileInfo, err error) error {
 			lg.Fatalln(err)
 		}
 		result := true
-		for i := range funcList {
-			result = (result && i(info))
+		for _, funcName := range funcList {
+			result = (result && funcName(info))
 		}
 		if result {
 			strCh <- path
