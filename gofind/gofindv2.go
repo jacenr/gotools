@@ -42,7 +42,7 @@ func init() {
 	flag.StringVar(&dirFlag, "d", "b", "Optional. \"n,o,b\", n: no dir, o: only dir, b: both dir and file will be output.")
 
 	// Specify the search path, default current work directory.
-	flag.StringVar(&dirs, "p", ".", "Optional. The search paths. Separated by comma.")
+	flag.StringVar(&dirs, "p", ".", "Optional. Search paths. Separated by comma.")
 }
 
 func main() {
