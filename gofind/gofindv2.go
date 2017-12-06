@@ -22,7 +22,7 @@ var size string
 var modifytime string
 var dirs string
 var strCh chan string
-var funcList []string
+var funcList []func(info os.FileInfo) bool
 
 func init() {
 	lg = log.New(os.Stderr, "gofind ", log.Lshortfile)
@@ -37,13 +37,13 @@ func main() {
 	strCh = make(chan string)
 	funcList = make([]string, 0, 3)
 	if name != "" {
-		funcList := append(funcList, "byName")
+		funcList := append(funcList, byName)
 	}
 	if size != "" {
-		funcList := append(funcList, "bySize")
+		funcList := append(funcList, bySize)
 	}
 	if modifytime != "" {
-		funcList := append(funcList, "byTime")
+		funcList := append(funcList, byTime)
 	}
 	dirsList := strings.Split(dirs, ",")
 	for _, dir := range dirsList {
