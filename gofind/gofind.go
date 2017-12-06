@@ -32,7 +32,7 @@ func init() {
 
 func main() {
 	flag.Parse()
-	strCh = make(chan string)
+	strCh = make(chan string, 100)
 	dirsList := strings.Split(dirs, ",")
 	for _, dir := range dirsList {
 		wg.Add(1)
@@ -48,13 +48,13 @@ func main() {
 		wg.Wait()
 		close(strCh)
 	}()
-	newlineBuff := bytes.NewBuffer([]byte("\n"))
+	// newline := []byte("\n")
 	for file := range strCh {
-		//		fmt.Println(file)
-		fileByte := []byte(file)
-		buf := bytes.NewBuffer(fileByte)
-		io.Copy(os.Stdout, buf)
-		io.Copy(os.Stdout, newlineBuff)
+		fmt.Println(file)
+		// fileByte := []byte(file)
+		// buf := bytes.NewBuffer(fileByte)
+		// io.Copy(os.Stdout, buf)
+		// io.Copy(os.Stdout, bytes.NewBuffer(newline))
 	}
 }
 
