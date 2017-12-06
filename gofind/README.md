@@ -1,4 +1,4 @@
-#gofind V2
+# gofind V2
 	
 	Search file or directory by name or size or modify time in specify paths or current work directory.
 
