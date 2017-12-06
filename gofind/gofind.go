@@ -102,7 +102,7 @@ func bySize(info os.FileInfo) bool {
 	if siezErr != nil {
 		return false
 	}
-	fileSize := info.Size()
+	fileSize := uint64(info.Size())
 	switch sizeOpt[0] {
 	case "=":
 		return fileSize == sizeN
@@ -127,7 +127,10 @@ func byTime(info os.FileInfo) bool {
 		return false
 	}
 	timeForm := "20060102150405"
-	timeS := time.Parse(timeForm, timeOpt[1])
+	timeS, timeErr := time.Parse(timeForm, timeOpt[1])
+	if timeErr != nil {
+		return false
+	}
 	fileTime := info.ModTime()
 	switch timeOpt[0] {
 	case "=":
