@@ -23,7 +23,8 @@ gofind V2
 			Search file by modify time. Option format: ">=,20171206114930".
 	
 		-d
-			Filter file or directory by type. "dir": "directory". For example: -d="o", only dierctory is outputted.
+			Filter file or directory by type. "dir": "directory". For example: -d="o", 
+			only dierctory name is outputted.
 	
 		-p
 			Specify the search path, default current work directory. Multi paths separated by comma.
