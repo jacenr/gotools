@@ -22,6 +22,7 @@ var size string
 var modifytime string
 var dirs string
 var strCh chan string
+var funcList []string
 
 func init() {
 	lg = log.New(os.Stderr, "gofind ", log.Lshortfile)
@@ -34,6 +35,16 @@ func init() {
 func main() {
 	flag.Parse()
 	strCh = make(chan string)
+	funcList = make([]string, 0, 3)
+	if name != "" {
+		funcList := append(funcList, "byName")
+	}
+	if size != "" {
+		funcList := append(funcList, "bySize")
+	}
+	if modifytime != "" {
+		funcList := append(funcList, "byTime")
+	}
 	dirsList := strings.Split(dirs, ",")
 	for _, dir := range dirsList {
 		wg.Add(1)
@@ -65,7 +76,11 @@ func walkFn(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			lg.Fatalln(err)
 		}
-		if byName(info) && bySize(info) && byTime(info) {
+		result := true
+		for i := range funcList {
+			result = (result && i(info))
+		}
+		if result {
 			strCh <- path
 		}
 		wg.Done()
@@ -74,9 +89,9 @@ func walkFn(path string, info os.FileInfo, err error) error {
 }
 
 func byName(info os.FileInfo) bool {
-	if name == "" {
-		return true
-	}
+	// if name == "" {
+	// 	return true
+	// }
 	nameOpt := strings.Split(name, ",")
 	if len(nameOpt) != 2 {
 		return false
@@ -98,9 +113,9 @@ func byName(info os.FileInfo) bool {
 }
 
 func bySize(info os.FileInfo) bool {
-	if size == "" {
-		return true
-	}
+	// if size == "" {
+	// 	return true
+	// }
 	sizeOpt := strings.Split(size, ",")
 	if len(sizeOpt) != 2 {
 		return false
@@ -126,9 +141,9 @@ func bySize(info os.FileInfo) bool {
 }
 
 func byTime(info os.FileInfo) bool {
-	if modifytime == "" {
-		return true
-	}
+	// if modifytime == "" {
+	// 	return true
+	// }
 	timeOpt := strings.Split(modifytime, ",")
 	if len(timeOpt) != 2 {
 		return false
