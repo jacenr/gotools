@@ -8,7 +8,8 @@ gofind V2
 		./gofindv2 -n="full,nginx" -p="/usr"
 			Search nginx in /usr.
 		./gofindv2 -m=">,20171205000000" -n="sub,test" -d="o" /tmp
-			Search file whose name contain "test" and modify time after "Dec 6 00:00:00 2017", and only directory names are outputted.
+			Search file whose name contain "test" and modify time after "Dec 6 00:00:00 2017", 
+			and only directory names are outputted.
 
 	Options:
 		-n 
