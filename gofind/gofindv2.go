@@ -20,6 +20,7 @@ var wg sync.WaitGroup
 var name string
 var size string
 var modifytime string
+var dirFlag string
 var dirs string
 var strCh chan string
 var funcList []func(info os.FileInfo) bool
@@ -29,6 +30,7 @@ func init() {
 	flag.StringVar(&name, "n", "", "Optional. Search files by name with \"full\", \"sub\", \"reg\" sub-option.")
 	flag.StringVar(&size, "s", "", "Optional. Search files by size with \"=\", \"<\", \"<=\", \">\", \">=\" sub-option.")
 	flag.StringVar(&modifytime, "m", "", "Optional. Search files by modify time with \"=\", \"<\", \"<=\", \">\", \">=\" sub-option.") // eg: >=,20171206114930
+	flag.StringVar(&dirFlag, "d", "b", "Optional. \"n,o,b\", n: no dir, o: only dir, b: both dir and file will be output.")
 	flag.StringVar(&dirs, "p", ".", "Optional. The search paths. Separated by comma.")
 }
 
@@ -37,13 +39,13 @@ func main() {
 	strCh = make(chan string)
 	funcList = make([]func(info os.FileInfo) bool, 0, 3)
 	if name != "" {
-		funcList := append(funcList, byName)
+		funcList = append(funcList, byName)
 	}
 	if size != "" {
-		funcList := append(funcList, bySize)
+		funcList = append(funcList, bySize)
 	}
 	if modifytime != "" {
-		funcList := append(funcList, byTime)
+		funcList = append(funcList, byTime)
 	}
 	dirsList := strings.Split(dirs, ",")
 	for _, dir := range dirsList {
@@ -73,6 +75,17 @@ func main() {
 func walkFn(path string, info os.FileInfo, err error) error {
 	wg.Add(1)
 	go func(path string, info os.FileInfo, err error) {
+		defer wg.Done()
+		switch dirFlag {
+		case "o":
+			if !info.IsDir() {
+				return
+			}
+		case "n":
+			if info.IsDir() {
+				return
+			}
+		}
 		if err != nil {
 			lg.Fatalln(err)
 		}
@@ -83,7 +96,6 @@ func walkFn(path string, info os.FileInfo, err error) error {
 		if result {
 			strCh <- path
 		}
-		wg.Done()
 	}(path, info, err)
 	return nil
 }
