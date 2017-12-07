@@ -12,7 +12,10 @@
 		3. ./gofindv2 -m=">,20171205000000" -n=sub,test -d=o -p=/tmp,/mnt
 			Search file whose name contain "test" and modify time after "Dec 5 00:00:00 2017", 
 			and only directory are outputted.
-			Note the comma separator and option with digits should be surrounded by double quotes.
+			Note the comma separator, and option with digits should be surrounded by double quotes.
+		4. ./gofindv2 -s="<=,32" -n=sub,test -p=/tmp
+			Search file whose name contain "test" and size not greater than 32B.
+			The argument with digit (eg: "32") should be surrounded by double quotes.
 
 	Options:
 		1. -n 
@@ -26,10 +29,7 @@
 			Search file by modify time. Option format: ">=,20171206114930".
 	
 		4. -d
-			Filter file or directory by type. "dir": "directory". For example: -d="o", 
-			only dierctory name is outputted.
+			Filter file or directory by type. For example: -d=o, only dierctory name is outputted.
 	
 		5. -p
 			Specify the search path, default current work directory. Multi paths separated by comma.
-
-
